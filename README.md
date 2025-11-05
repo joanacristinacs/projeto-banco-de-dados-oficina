@@ -27,9 +27,24 @@ O banco foi modelado seguindo práticas de normalização, integridade referenci
 
 ## ✅ 2. 🧩 Modelo Relacional (Lógico)
 
-> **Insira aqui a imagem do seu MODELO RELACIONAL.  
-Use o formato:**  
-> `![Modelo Relacional](img/modelo-relacional.png)`
+![Modelo Relacional da Oficina](docs/modelo_oficina.png)
+
+O modelo relacional implementa as entidades (em português pt-br) e relacionamentos:
+
+| Tabela | Atributos Principais | Relacionamento |
+|--------|--------------------|----------------|
+| `cliente` | id_cliente, primeiro_nome, nome_meio, sobrenome, rua, bairro, cidade, estado, telefone, email | 1:N com `veiculo`, 1:N com `agendamento` |
+| `veiculo` | id_veiculo, id_cliente, marca, modelo, ano, placa | N:1 com `cliente`, 1:N com `agendamento` |
+| `funcionario` | id_funcionario, primeiro_nome, nome_meio, sobrenome, cargo, salario | 1:N com `ordem_servico` |
+| `agendamento` | id_agendamento, id_cliente, id_veiculo, data_agendada, descricao_problema | N:1 com `cliente`, N:1 com `veiculo`, 1:1 com `ordem_servico` |
+| `ordem_servico` | id_ordem_servico, id_agendamento, id_funcionario, data_emissao, status, valor_total | N:1 com `agendamento`, N:1 com `funcionario`, N:N com `servico` e `peca`, 1:N com `pagamento` |
+| `servico` | id_servico, descricao, preco | N:N com `ordem_servico` |
+| `ordem_servico_servico` | id_ordem_servico, id_servico, quantidade | N:N entre `ordem_servico` e `servico` |
+| `peca` | id_peca, nome, preco_unitario | N:N com `ordem_servico`, 1:N com `estoque` |
+| `ordem_servico_peca` | id_ordem_servico, id_peca, quantidade | N:N entre `ordem_servico` e `peca` |
+| `fornecedor` | id_fornecedor, primeiro_nome, nome_meio, sobrenome, cnpj, telefone | 1:N com `estoque` |
+| `estoque` | id_estoque, id_peca, quantidade, id_fornecedor | N:1 com `peca`, N:1 com `fornecedor` |
+| `pagamento` | id_pagamento, id_ordem_servico, forma_pagamento, valor, data_pagamento | N:1 com `ordem_servico` |
 
 ---
 
@@ -43,7 +58,7 @@ O arquivo contém todo o script para criação do schema:
 ✅ Tipos ENUM representando estados do sistema  
 ✅ Relacionamentos N:N resolvidos com tabelas associativas
 
-> 📄 Arquivo: **`ddl_oficina.sql`**
+> 📄 Arquivo: [`script_oficina_tables.sql`](sql/script_oficina_tables.sql)  
 
 ---
 
@@ -66,7 +81,26 @@ As tabelas preenchidas incluem:
 - Pagamento  
 - Agendamento  
 
-> 📄 Arquivo: **`inserts_oficina.sql`**
+> 📄 Arquivo: [`script_oficina_inserts.sql`](sql/script_oficina_inserts.sql)
+
+### 🔹 Modelo Relacional Resumido
+
+Abaixo está uma visão geral das entidades, atributos principais e relacionamentos do banco:
+
+| Table | Key Attributes | Relationship |
+|-------|----------------|--------------|
+| `client` | id_client, first_name, middle_name, last_name, street, district, city, state, phone, email | 1:N with `vehicle`, 1:N with `appointment` |
+| `vehicle` | id_vehicle, id_client, brand, model, year, plate | N:1 with `client`, 1:N with `appointment` |
+| `employee` | id_employee, first_name, middle_name, last_name, role, salary | 1:N with `service_order` |
+| `appointment` | id_appointment, id_client, id_vehicle, appointment_date, problem_description | N:1 with `client`, N:1 with `vehicle`, 1:1 with `service_order` |
+| `service_order` | id_service_order, id_appointment, id_employee, issue_date, status, total_value | N:1 with `appointment`, N:1 with `employee`, N:N with `service` via `service_order_service`, N:N with `part` via `service_order_part`, 1:N with `payment` |
+| `service` | id_service, description, price | N:N with `service_order` via `service_order_service` |
+| `service_order_service` | id_service_order, id_service, quantity | N:N bridge between `service_order` and `service` |
+| `part` | id_part, name, unit_price | N:N with `service_order` via `service_order_part`, 1:N with `stock` |
+| `service_order_part` | id_service_order, id_part, quantity | N:N bridge between `service_order` and `part` |
+| `supplier` | id_supplier, first_name, middle_name, last_name, cnpj, phone | 1:N with `stock` |
+| `stock` | id_stock, id_part, quantity, id_supplier | N:1 with `part`, N:1 with `supplier` |
+| `payment` | id_payment, id_service_order, payment_method, amount, payment_date | N:1 with `service_order` |
 
 ---
 
@@ -85,7 +119,7 @@ Foram criadas queries completas utilizando:
 ✅ Views  
 ✅ Consultas extras mais avançadas  
 
-> 📄 Arquivo: **`queries_oficina.sql`**
+> 📄 Arquivo: [`script_oficina_queries.sql`](sql/script_oficina_queries.sql)  
 
 ---
 
@@ -121,7 +155,7 @@ Algumas perguntas que as queries permitem responder:
 ## ✅ 8. 🏗️ Tecnologias Utilizadas
 
 - ✅ **MySQL 8+**  
-- ✅ **Workbench** (opcional)  
+- ✅ **Workbench**  
 - ✅ Scripts SQL  
 - ✅ Markdown para documentação
 
@@ -129,24 +163,17 @@ Algumas perguntas que as queries permitem responder:
 
 ## ✅ 9. 📁 Estrutura do Repositório
 
-
-```
+```text
 📦 oficina-mecanica-mysql
-oficina-db/
-│
 ├── README.md
-│
 ├── sql/
-│   ├── 01_ddl_create_tables.sql
-│   ├── 02_inserts.sql
-│   ├── 03_queries.sql
-│
+│   ├── script_oficina_tables.sql      ← Criação das tabelas
+│   ├── script_oficina_inserts.sql     ← Inserts com dados de teste
+│   └── script_oficina_queries.sql     ← Queries obrigatórias e extras
 └── docs/
-    ├── modelo_relacional.png   ← você vai colocar a foto aqui
-    └── diagrama_entidade_relacionamento.png (opcional)
+    └── modelo_oficina.png             ← Modelo relacional da oficina
 
-```
-
+````
 
 ---
 
@@ -157,7 +184,7 @@ Como parte do desafio do módulo de Banco de Dados, curso: DIO.
 
 ---
 
-## ✅ 11. ✅ Status do Projeto
+## ✅ 11. Status do Projeto
 
 🟩 **Concluído e funcionando.**  
 Scripts testados e validados.
@@ -170,4 +197,27 @@ Este projeto é livre para uso acadêmico e estudos.
 
 ---
 
+## 🚀 Como usar
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/joanacristinacs/projeto-banco-de-dados-oficina.git
+```
+
+Acesse a pasta do projeto:
+
+```bash
+cd projeto-banco-de-dados-oficina/sql
+```
+Execute os scripts no MySQL:
+
+-- Criar banco e tabelas
+source script_oficina_tables.sql;
+
+-- Inserir dados de teste
+source script_oficina_inserts.sql;
+
+-- Executar queries
+source script_oficina_queries.sql;
 
