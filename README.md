@@ -58,7 +58,7 @@ O arquivo contém todo o script para criação do schema:
 ✅ Tipos ENUM representando estados do sistema  
 ✅ Relacionamentos N:N resolvidos com tabelas associativas
 
-> 📄 Arquivo: [`script_oficina_tables.sql`](sql/script_oficina_tables.sql)  
+> 📄 Arquivo: [`script_oficina_tables.sql`](SQL/script_oficina_tables.sql)  
 
 ---
 
@@ -81,7 +81,7 @@ As tabelas preenchidas incluem:
 - Pagamento  
 - Agendamento  
 
-> 📄 Arquivo: [`script_oficina_inserts.sql`](sql/script_oficina_inserts.sql)
+> 📄 Arquivo: [`script_oficina_inserts.sql`](SQL/script_oficina_inserts.sql)
 
 ### 🔹 Modelo Relacional Resumido
 
@@ -119,7 +119,7 @@ Foram criadas queries completas utilizando:
 ✅ Views  
 ✅ Consultas extras mais avançadas  
 
-> 📄 Arquivo: [`script_oficina_queries.sql`](sql/script_oficina_queries.sql)  
+> 📄 Arquivo: [`script_oficina_queries.sql`](SQL/script_oficina_queries.sql)  
 
 ---
 
